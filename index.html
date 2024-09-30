@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      main {
+        display: flex;
+      }
+      main > * {
+        border: 1px solid grey;
+        width: 50%;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .card {
+        border: 1px solid black;
+        margin-top: 20px;
+        padding: 30px;
+        width: 200px;
+        height: 220px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: gray;
+        font-size: 20px;
+      }
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        
+      }
+      #products{
+        display: grid;
+        grid-template-columns: auto auto auto;
+      }
+      button{
+        width: 120px;
+        height: 35px;
+        border: none;
+        border-radius: 20px;
+        font-size: 15px;
+      }
+      button:hover{
+        background-color: #ccc;
+      }
+      .bottom{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+      }
+      
+      
+    </style>
+  </head>
+  <body>
+    <main>
+      
+      <div id="products"></div>
+      <div id="cart"></div>
+    </main>
+    <script>
+
+      let cart = {};
+ 
+      let products = [
+        {
+          id: 101,
+          name: 'Wireless Mouse',
+          price: 29.99,
+          category: 'Electronics',
+          inStock: true,
+          colors: ['red', 'blue'],
+        },
+        {
+          id: 102,
+          name: 'Notebook',
+          price: 5.99,
+          category: 'Stationery',
+          inStock: true,
+        },
+        {
+          id: 103,
+          name: 'Coffee Mug',
+          price: 12.5,
+          category: 'Kitchenware',
+          inStock: false,
+          colors: ['yellow', 'white'],
+        }
+      ];
+
+      populateProducts();
+      
+      function populateProducts() {
+        let productsGallery = document.getElementById('products');
+        let productsHTML = generateProductsHTML();
+        productsGallery.innerHTML = productsHTML;
+      }
+
+      function generateProductsHTML() {
+        return products.map(function (product) {
+          return generateSingleProductHTML(product);
+        }).join('');
+      }
+
+      function generateSingleProductHTML(product) {
+        
+  return `
+  <div class="card">
+      <div class="top">
+      </div>
+      <div class="bottom">
+          <div class="name">${product.name}</div>
+          <div class="price">$${product.price.toFixed(2)}</div>
+          <button onclick="addToCart(${product.id})" ${!product.inStock ? 'disabled' : ''}>
+            ${product.inStock ? 'Add To Cart' : 'Out of Stock'}
+          </button>
+      </div>
+  </div>
+  `;
+}
+//cart code
+      function addToCart(productId) {
+        if (cart[productId]) {
+          cart[productId]++;
+        } else {
+          cart[productId] = 1;
+        }
+        console.log(`Added product of ID ${productId} to cart!`);
+        updateCart();
+      }
+
+      function updateCart() {
+        let cartContainer = document.getElementById('cart');
+        cartContainer.innerHTML = generateCartHTML();
+      }
+
+      function generateCartHTML() {
+        let cartItemsHTML = Object.keys(cart).map(productId => {
+          const product = products.find(p => p.id === parseInt(productId));
+          return generateCartItemHTML(product);
+        }).join('');
+
+        return `<h2>Shopping Cart</h2>${cartItemsHTML }`;
+      }
+
+      function generateCartItemHTML(product) {
+        return `
+        <div class="cart-item">
+            <span>${product.name}</span>
+            <span>Qty: ${cart[product.id]}</span>
+            <span>Price: $${(product.price * cart[product.id]).toFixed(2)}</span>
+        </div>
+        `;
+      }
+    </script>
+  </body>
+</html>
